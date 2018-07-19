@@ -44,6 +44,7 @@ typedef struct {
 	unsigned short type;
 	unsigned short flags;
 	float x, y;
+	int amount; //For scrolling
 } input_mouse_t;
 
 
@@ -195,8 +196,8 @@ void app_on_message(app_t *self, libwebsocket *socket, void *data, size_t len) {
 		}
 
 		if( type & input_type_mouse_button ) {
-			//printf("mouse button %d\n", input->flags);
-			mouse_event(input->flags, 0, 0, 0, NULL);
+			//printf("mouse button %d and scroll amount %d\n", input->flags, input->amount);
+			mouse_event(input->flags, 0, 0, input->amount, NULL);
 		}
 	}
 }
