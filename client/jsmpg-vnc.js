@@ -97,7 +97,7 @@ var sendMouse = function(ev, action) {
 	mouseDataTypeFlags[1] = (action||0);
 	mouseDataCoords[0] = x;
 	mouseDataCoords[1] = y;
-	mouseScrollAmount[0] = (ev.wheelDelta||0); //TODO: Fix in Firefox
+	mouseScrollAmount[0] = (-ev.detail * 20 || ev.wheelDelta || 0);
 	 
 	client.send(mouseDataBuffer);
 	ev.preventDefault();
@@ -112,7 +112,9 @@ window.addEventListener('keyup', function(ev) { sendKey(ev, KEY_UP, ev.keyCode);
 canvas.addEventListener('mousemove', function(ev){ sendMouse(ev, null); }, false);
 canvas.addEventListener('mousedown', function(ev){ sendMouse(ev, ev.button == 2 ? MOUSE_2_DOWN : MOUSE_1_DOWN); }, false);
 canvas.addEventListener('mouseup', function(ev){ sendMouse(ev, ev.button == 2 ? MOUSE_2_UP : MOUSE_1_UP); }, false);
+canvas.addEventListener('onmousewheel', function(ev){ sendMouse(ev, MOUSEEVENTF_WHEEL); }, false);
 canvas.addEventListener('mousewheel', function(ev){ sendMouse(ev, MOUSEEVENTF_WHEEL); }, false);
+canvas.addEventListener('DOMMouseScroll', function(ev){ sendMouse(ev, MOUSEEVENTF_WHEEL); }, false);
 
 // Touch
 canvas.addEventListener('touchstart', function(ev){
