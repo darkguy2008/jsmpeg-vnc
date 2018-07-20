@@ -34,7 +34,6 @@ var KEY_DOWN = 0x01,
 	MOUSE_2_DOWN = 0x0008,
 	MOUSE_2_UP = 0x0010;
 	MOUSEEVENTF_WHEEL = 0x0800;
-// struct input_mouse_t { uint16 type, uint16 flags; float32 x; float32 y; int16 amount }
 // struct input_key_t { uint16 type, uint16 state; uint16 key_code; }
 var sendKey = function(ev, action, key) {
 	client.send(new Uint16Array([INPUT_KEY, action, key]));
