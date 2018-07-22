@@ -139,6 +139,9 @@ void app_on_connect(app_t *self, libwebsocket *socket) {
 
 void app_on_close(app_t *self, libwebsocket *socket) {
 	printf("\nclient disconnected: %s\n", server_get_client_address(self->server, socket));
+	//todo: turn off caps lock as well
+	keybd_event(VK_SHIFT,0x10,KEYEVENTF_KEYUP,0);
+	keybd_event(VK_CONTROL,0x11,KEYEVENTF_KEYUP,0);
 }
 
 void app_on_message(app_t *self, libwebsocket *socket, void *data, size_t len) {
@@ -150,8 +153,6 @@ void app_on_message(app_t *self, libwebsocket *socket, void *data, size_t len) {
 
 	if( type & input_type_key && len >= sizeof(input_key_t) ) {
 		input_key_t *input = (input_key_t *)data;
-
-		if( input->key_code == VK_CAPITAL ) { return; } // ignore caps lock
 
 		UINT scan_code = MapVirtualKey(input->key_code, MAPVK_VK_TO_VSC_EX);
 		UINT flags = KEYEVENTF_SCANCODE	| (input->state ? 0 : KEYEVENTF_KEYUP);
