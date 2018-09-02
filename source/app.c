@@ -29,9 +29,9 @@ typedef enum {
 	input_type_mouse_absolute = 0x0004,
 	input_type_mouse_relative = 0x0008,
 	input_type_mouse = 
-		input_type_mouse_button | 
-		input_type_mouse_absolute | 
-		input_type_mouse_relative
+	input_type_mouse_button | 
+	input_type_mouse_absolute | 
+	input_type_mouse_relative
 } input_type_t;
 
 typedef struct {

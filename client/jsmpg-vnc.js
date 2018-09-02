@@ -35,7 +35,11 @@ var KEY_DOWN = 0x01,
 	MOUSE_2_UP = 0x0010,
 	MOUSEEVENTF_WHEEL = 0x0800,
 	MOUSEEVENTF_MIDDLEUP = 0x0040,
-	MOUSEEVENTF_MIDDLEDOWN = 0x0020;
+	MOUSEEVENTF_MIDDLEDOWN = 0x0020,
+	MOUSEEVENTF_XDOWN = 0x0080, //an "x" button is like the forward and back button on your mouse. Microsoft doesn't have different up and down identifers for each key
+	MOUSEEVENTF_XUP = 0x0100, //You define if it's the forward or backward key via the dwExtraInfo parameter.
+	XBUTTON1 = 0x0001,
+	XBUTTON2 = 0x0002; //It's this number that goes into the dwExtraInfo parameter.
 
 // struct input_key_t { uint16 type, uint16 state; uint16 key_code; }
 var sendKey = function(ev, action, key) {
@@ -49,7 +53,7 @@ var mouseDataTypeFlags = new Uint16Array(mouseDataBuffer, 0);
 var mouseDataCoords = new Float32Array(mouseDataBuffer, 4);
 var mouseScrollAmount = new Int32Array(mouseDataBuffer, 12);
 
-var sendMouse = function(ev, action) {
+var sendMouse = function(ev, action, xbutton) {
 	var type = 0;
 	var x, y;
 
@@ -99,7 +103,8 @@ var sendMouse = function(ev, action) {
 	mouseDataTypeFlags[1] = (action||0);
 	mouseDataCoords[0] = x;
 	mouseDataCoords[1] = y;
-	mouseScrollAmount[0] = (-ev.detail * 20 || ev.wheelDelta || 0);
+	//Because the xbutton and scroll data go into the dwExtraInfo parameter we will just send the xbutton here.
+	mouseScrollAmount[0] = (xbutton || -ev.detail * 20 || ev.wheelDelta || 0);
 	 
 	client.send(mouseDataBuffer);
 	ev.preventDefault();
@@ -116,6 +121,7 @@ canvas.addEventListener('mousemove', function(ev){ sendMouse(ev, null); }, false
 function btndwn(ev){
 	var ev = ev || window.event;
     var btnCode;
+	ev.preventDefault();
 
         btnCode = ev.button;
 
@@ -130,6 +136,17 @@ function btndwn(ev){
 
             case 2:
                 sendMouse(ev, MOUSE_2_DOWN);
+			break;
+			
+			//These keys are handled differently from the rest https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-mouse_event#parameters
+			case 3:
+				//This is usually the browser back button
+				sendMouse(ev, MOUSEEVENTF_XDOWN, XBUTTON1);
+			break;
+			
+			case 4:
+				//This is usually the browser forward button
+				sendMouse(ev, MOUSEEVENTF_XDOWN, XBUTTON2);
             break;
 
             default:
@@ -139,6 +156,7 @@ function btndwn(ev){
 function btnup(ev){
 	var ev = ev || window.event;
     var btnCode;
+	ev.preventDefault();
 
         btnCode = ev.button;
 
@@ -154,7 +172,18 @@ function btnup(ev){
             case 2:
                 sendMouse(ev, MOUSE_2_UP);
             break;
-
+			
+			//These keys are handled differently from the rest https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-mouse_event#parameters
+			case 3:
+				//This is usually the browser back button
+				sendMouse(ev, MOUSEEVENTF_XUP, XBUTTON1);
+			break;
+			
+			case 4:
+				//This is usually the browser forward button
+				sendMouse(ev, MOUSEEVENTF_XUP, XBUTTON2);
+            break;
+			
             default:
                 console.log('Unexpected code: ' + btnCode);
         }
