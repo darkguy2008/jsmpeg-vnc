@@ -139,9 +139,13 @@ void app_on_connect(app_t *self, libwebsocket *socket) {
 
 void app_on_close(app_t *self, libwebsocket *socket) {
 	printf("\nclient disconnected: %s\n", server_get_client_address(self->server, socket));
-	//todo: turn off caps lock as well
+	if ((GetKeyState(VK_CAPITAL) & 0x0001)!=0){
+		keybd_event(VK_CAPITAL,0x14,0,0);
+		keybd_event(VK_CAPITAL,0x14,KEYEVENTF_KEYUP,0);
+	}
 	keybd_event(VK_SHIFT,0x10,KEYEVENTF_KEYUP,0);
 	keybd_event(VK_CONTROL,0x11,KEYEVENTF_KEYUP,0);
+
 }
 
 void app_on_message(app_t *self, libwebsocket *socket, void *data, size_t len) {
