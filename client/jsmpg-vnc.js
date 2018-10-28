@@ -6,7 +6,7 @@ document.body.className = ('ontouchstart' in window) ? 'mobile' : 'desktop';
 var client = new WebSocket( 'ws://' + window.location.host + '/ws' );
 
 var canvas = document.getElementById('videoCanvas');
-var player = new jsmpeg(client, {canvas:canvas});
+var player = new JSMpeg.Player(client, {canvas:canvas});
 
 
 // Input
