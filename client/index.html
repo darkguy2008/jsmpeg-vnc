@@ -10,17 +10,23 @@
     <style>
         body.desktop .mobile-only { display: none; }
         body.mobile .desktop-only { display: none; }
+		
     #controller{
+        z-index:100;
+        position:fixed;
         width:150px;
         height:150px;
         font-size:150px;//font-size is used to determine the size of arrows
     }
+	#videoCanvas {
+	z-index:1;
+	}
     </style>
 </head>
 <body oncontextmenu="return false">
     <canvas id="videoCanvas"></canvas>
 	
-    <div id='controller' class="joydiv-controller">
+    <div id='controller' class="joydiv-controller mobile-only">
         <div class="joydiv-up"></div>
         <div class="joydiv-left"></div>
         <div class="joydiv-right"></div>
@@ -29,7 +35,6 @@
         <div class="joydiv-tracker"></div>
         </div>
     </div>
-    <input type="text" id="direction">
 </body>
 	<script type="text/javascript" src="jsmpg.js"></script>
 	<script type="text/javascript" src="jsmpg-vnc.js"></script>
@@ -38,7 +43,6 @@
     var element = document.getElementById('controller');
     var joydiv = new JoydivModule.Joydiv({'element':element});
     element.addEventListener('joydiv-changed',function(e){
-      document.getElementById('direction').value = joydiv.getOneOf8Directions().name;
 	  switch(joydiv.getOneOf8Directions().name) {
 		case "up":
 		sendKey(null, KEY_DOWN, 87);//W
@@ -66,20 +70,21 @@
 		break;
 		
 		case "down-left":
-		sendKey(null, KEY_DOWN, 83);//W
+		sendKey(null, KEY_DOWN, 83);//S
 		sendKey(null, KEY_DOWN, 65);//A
 		break;
 		
 		case "down-right":
-		sendKey(null, KEY_DOWN, 83);//W
+		sendKey(null, KEY_DOWN, 83);//S
 		sendKey(null, KEY_DOWN, 68);//D
 		break;
 		
-		default:
+		case "none":
 		sendKey(null, KEY_UP, 87);//W
 		sendKey(null, KEY_UP, 83);//S
 		sendKey(null, KEY_UP, 65);//A
 		sendKey(null, KEY_UP, 68);//D
+		break;
 	  }
     });
   </script>

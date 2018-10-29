@@ -2,6 +2,7 @@
   position:relative;
   top:0;
   left:0;
+  z-index: 100;
 }
 .joydiv-controller .joydiv-up,
 .joydiv-controller .joydiv-left,
@@ -12,6 +13,7 @@
   height:0;
   background: transparent;
   border:solid transparent;
+  z-index: 100;
 }
 
 .joydiv-controller .joydiv-up{
@@ -23,6 +25,7 @@
   border-left-width: .15em;
   border-right-width: .15em;
   border-bottom-width: .2em;
+  z-index: 100;
 }
 .joydiv-controller .joydiv-left{
   left:0;
@@ -33,6 +36,7 @@
   border-right-width: .2em;
   border-bottom-width: .15em;
   margin-top:-15%;
+  z-index: 100;
 }
 .joydiv-controller .joydiv-right{
   right:0;
@@ -43,6 +47,7 @@
   border-left-width: .2em;
   border-right-width: 0;
   border-bottom-width: .15em;
+  z-index: 100;
 }
 .joydiv-controller .joydiv-down{
   bottom:0;
@@ -53,6 +58,7 @@
   border-left-width: .15em;
   border-right-width: .15em;
   border-bottom-width: 0;
+  z-index: 100;
 }
 .joydiv-controller .joydiv-trackpad{
   position:absolute;
@@ -61,6 +67,7 @@
   top:30%;
   bottom:30%;
   background:#EEF;
+  z-index: 100;
 }
 .joydiv-controller .joydiv-tracker{
   position:absolute;
@@ -72,4 +79,5 @@
   margin-left:-.1em;
   margin-top:-.1em;
   border-color:#CCF;
+  z-index: 100;
 }
