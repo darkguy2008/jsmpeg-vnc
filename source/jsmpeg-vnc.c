@@ -1,6 +1,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <stdio.h>
+#include <string>
 #include "app.h"
 
 typedef struct {
@@ -63,6 +64,8 @@ int main(int argc, char* argv[]) {
 		height = 0,
 		allow_input = 1;
 	
+	std::string grabber_dll = "";
+
 	grabber_crop_area_t crop = {0, 0, 0, 0};
 
 	// Parse command line options
@@ -78,6 +81,7 @@ int main(int argc, char* argv[]) {
 			case 'f': fps = atoi(argv[i+1]); break;
 			case 'i': allow_input = atoi(argv[i+1]); break;
 			case 'c': sscanf(argv[i+1], "%d,%d,%d,%d", &crop.x, &crop.y, &crop.width, &crop.height); break;
+			case 'g': grabber_dll = argv[i+1]; break;
 			default: exit_usage(argv[0]);
 		}
 	}
@@ -103,7 +107,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	// Start the app
-	app_t *app = app_create(window, port, bit_rate, width, height, allow_input, crop);
+	app_t *app = app_create(window, port, bit_rate, width, height, allow_input, crop, grabber_dll);
 
 	if( !app ) {
 		return 1;
