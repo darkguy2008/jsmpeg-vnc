@@ -7,7 +7,7 @@
 
 typedef void (__cdecl* dll_grabber_create)(HWND window, int& width, int& height);
 typedef void (__cdecl* dll_grabber_destroy)();
-typedef void (__cdecl* dll_grabber_grab)(void* pixels, int width, int height);
+typedef int (__cdecl* dll_grabber_grab)(HWND window, void* pixels, int width, int height);
 
 typedef struct {
 	int x, y, width, height;

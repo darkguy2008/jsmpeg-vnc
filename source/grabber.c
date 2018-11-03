@@ -77,8 +77,10 @@ void grabber_destroy(grabber_t *self) {
 }
 
 void *grabber_grab(grabber_t *self) {
-	if ( self->dll > 0 ) {
-		self->dll_grab(self->pixels, self->width, self->height);
+	if( self->dll > 0 ) {
+		if( self->dll_grab(self->window, self->pixels, self->width, self->height) == 0) {
+			return NULL;
+		}
 	} else {
 		SelectObject(self->memoryDC, self->bitmap);
 		BitBlt(self->memoryDC, 0, 0, self->width, self->height, self->windowDC, self->crop.x, self->crop.y, SRCCOPY);
