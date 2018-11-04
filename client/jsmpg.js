@@ -1028,7 +1028,8 @@ jsmpeg.prototype.initWebGL = function() {
 		depth: false,
 		stencil: false,
 		antialias: false,
-		premultipliedAlpha: false};
+		premultipliedAlpha: false
+		};
 		
 		gl = this.gl = this.canvas.getContext('webgl', options) || this.canvas.getContext('experimental-webgl', options);
 	} catch (e) {
@@ -1087,7 +1088,8 @@ jsmpeg.prototype.renderFrameGL = function(isClampedArray) {
 	// In some browsers WebGL doesn't like Uint8ClampedArrays (this is a bug
 	// and should be fixed soon-ish), so we have to create a Uint8Array view 
 	// for each plane.
-	this.shouldCreateUnclampedViews = !this.allowsClampedTextureData();
+	//this.shouldCreateUnclampedViews = !this.allowsClampedTextureData();
+	this.shouldCreateUnclampedViews = true;
 	
 	if (this.shouldCreateUnclampedViews) {
 	var uint8Y = new Uint8Array(this.currentY.buffer),
