@@ -24,7 +24,7 @@ var jsmpeg = window.jsmpeg = function(url, opts) {
 	this.zeroBlockData = new Int32Array(64);
 	this.fillArray(this.zeroBlockData, 0);
 	this.intraFrames = [];
-
+	
 	// Use WebGL for YCbCrToRGBA conversion if possible (much faster)
 	if (!opts.forceCanvas2D && this.initWebGL()) {
 		this.renderFrame = this.renderFrameGL;
@@ -1005,12 +1005,31 @@ jsmpeg.prototype.compileShader = function(type, source) {
 	return shader;
 };
 
+jsmpeg.prototype.allowsClampedTextureData = function() {
+	var gl = this.gl;
+	var texture = gl.createTexture();
+
+	gl.bindTexture(gl.TEXTURE_2D, texture);
+	gl.texImage2D(
+		gl.TEXTURE_2D, 0, gl.LUMINANCE, 1, 1, 0,
+		gl.LUMINANCE, gl.UNSIGNED_BYTE, new Uint8ClampedArray([0])
+	);
+	return (gl.getError() === 0);
+};
+
 jsmpeg.prototype.initWebGL = function() {
 	var gl;
 
 	// attempt to get a webgl context
 	try {
-		var options = { preserveDrawingBuffer: this.preserveDrawingBuffer };
+		var options = { 
+		preserveDrawingBuffer: this.preserveDrawingBuffer, 
+		alpha: false,
+		depth: false,
+		stencil: false,
+		antialias: false,
+		premultipliedAlpha: false};
+		
 		gl = this.gl = this.canvas.getContext('webgl', options) || this.canvas.getContext('experimental-webgl', options);
 	} catch (e) {
 		return false;
@@ -1062,15 +1081,20 @@ jsmpeg.prototype.initWebGL = function() {
 	return true;
 };
 
-jsmpeg.prototype.renderFrameGL = function() {
+jsmpeg.prototype.renderFrameGL = function(isClampedArray) {
 	var gl = this.gl;
 
-	// WebGL doesn't like Uint8ClampedArrays, so we have to create a Uint8Array view for
-	// each plane
+	// In some browsers WebGL doesn't like Uint8ClampedArrays (this is a bug
+	// and should be fixed soon-ish), so we have to create a Uint8Array view 
+	// for each plane.
+	this.shouldCreateUnclampedViews = !this.allowsClampedTextureData();
+	
+	if (this.shouldCreateUnclampedViews) {
 	var uint8Y = new Uint8Array(this.currentY.buffer),
 		uint8Cr = new Uint8Array(this.currentCr.buffer),
 		uint8Cb = new Uint8Array(this.currentCb.buffer);
-
+	}
+	
 	gl.activeTexture(gl.TEXTURE0);
 	gl.bindTexture(gl.TEXTURE_2D, this.YTexture);
 
