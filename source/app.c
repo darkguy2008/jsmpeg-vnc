@@ -128,6 +128,10 @@ int app_on_http_req(app_t *self, libwebsocket *socket, char *request) {
 		libwebsockets_serve_http_file(self->server->context, socket, "client/joydiv/joydiv.js", "text/javascript; charset=utf-8", NULL);
 		return true;
 	}
+	else if( strcmp(request, "/joydiv/joys.js") == 0 ) {
+		libwebsockets_serve_http_file(self->server->context, socket, "client/joydiv/joys.js", "text/javascript; charset=utf-8", NULL);
+		return true;
+	}
 	else if( strcmp(request, "/joydiv/joydiv-skin-default.css") == 0 ) {
 		libwebsockets_serve_http_file(self->server->context, socket, "client/joydiv/joydiv-skin-default.css", "text/css; charset=utf-8", NULL);
 		return true;
