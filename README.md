@@ -33,11 +33,14 @@ mouse movements, not absolute ones), append "?mouselock" at the target URL
 i.e: http://<server-ip>:8080/?mouselock
 ```	
 
-For sharing the whole Desktop, Windows' Aero theme should be disabled as it slows down screen capture significantly. When serving a single window (e.g. games), Aero only has a marginal performance impact and can be left enabled.
+For sharing the whole Desktop, Windows' Aero theme should be disabled as it slows down screen capture significantly. When serving a single window (e.g. games), Aero only has a marginal performance impact and can be left enabled. (Note: for Windows 8.1+ see [this](https://github.com/Integrated-Media/jsmpeg-vnc#Windows-8.1--up))
 
-Windows 8.1 and up: download the [grabber plugin](https://github.com/ollydev/jsmpeg-vnc-desktop-duplication/releases) and append the -g option. E.g. -g grabber.dll, this will be much faster and provide a higher framerate and lower latency
 
 Capturing and encoding 1920x1080 video narrowly amounts to 60fps on my system and occupies a whole CPU core. Capturing smaller windows significantly speeds up the process. Depending on your Wifi network quality you may also want to dial down the bitrate for large video sizes.
+
+## Windows 8.1 & Up
+
+Download the [grabber plugin](https://github.com/ollydev/jsmpeg-vnc-desktop-duplication/releases) and append the -g option. E.g. -g grabber.dll, this will be much faster and provide a higher framerate and lower latency. [See a desktop capture performance comparison here](https://imgur.com/a/hieMLNP).
 
 If Windows complains about a missing MSVCR100.dll, install the [Microsoft Visual C++ 2010 Redistributable Package](https://www.microsoft.com/en-us/download/details.aspx?id=5555).
 
