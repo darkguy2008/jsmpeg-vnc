@@ -53,7 +53,8 @@ var mouseDataTypeFlags = new Uint16Array(mouseDataBuffer, 0);
 var mouseDataCoords = new Float32Array(mouseDataBuffer, 4);
 var mouseScrollAmount = new Int32Array(mouseDataBuffer, 12);
 
-var sendMouse = function(ev, action, xbutton) {
+//mmouse, mX, and mY are all parts of the mobile controller. 
+var sendMouse = function(ev, action, xbutton, mmouse, mX, mY) {
 	var type = 0;
 	var x, y;
 
@@ -65,9 +66,12 @@ var sendMouse = function(ev, action, xbutton) {
 			canvas.requestPointerLock();
 		}
 	}
-	
+	if (mmouse){
+		x = mX;
+		y = mY;
+	}
 	// Only make relative mouse movements if no button is pressed
-	if( !action && mouseLock ) {
+	if( !action && mouseLock $$ !mmouse) {
 		type |= INPUT_MOUSE_RELATIVE;
 		
 		var p = ev.changedTouches ? ev.changedTouches[0] : ev;
@@ -87,7 +91,7 @@ var sendMouse = function(ev, action, xbutton) {
 
 	// If we send absoulte mouse coords, we can always do so, even for
 	// button presses.
-	if( !mouseLock ) {
+	if( !mouseLock && !mmouse) {
 		type |= INPUT_MOUSE_ABSOLUTE;
 		
 		var rect = canvas.getBoundingClientRect();

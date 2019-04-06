@@ -45,3 +45,44 @@
 		break;
 	  }
     });
+
+    var element = document.getElementById('mouse');
+    var joydiv = new JoydivModule.Joydiv({'element':element});
+    element.addEventListener('joydiv-changed',function(e){
+	  switch(joydiv.getOneOf8Directions().name) {
+		case "up":
+		console.log("up");
+		break;
+		case "down":
+		console.log("down");
+		break;
+		
+		case "left":
+		console.log("left");
+		break;
+		
+		case "right":
+		console.log("right");
+		break;
+		
+		case "up-left":
+		console.log("up-left");
+		break;
+		
+		case "up-right":
+		console.log("up-right");
+		break;
+		
+		case "down-left":
+		console.log("down-left");
+		break;
+		
+		case "down-right":
+		console.log("down-right");
+		break;
+		
+		case "none":
+		console.log("none");
+		break;
+	  }
+    });
