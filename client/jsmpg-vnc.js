@@ -40,11 +40,10 @@ var KEY_DOWN = 0x01,
 	MOUSEEVENTF_XUP = 0x0100, //You define if it's the forward or backward key via the dwExtraInfo parameter.
 	XBUTTON1 = 0x0001,
 	XBUTTON2 = 0x0002; //It's this number that goes into the dwExtraInfo parameter.
-
 // struct input_key_t { uint16 type, uint16 state; uint16 key_code; }
 var sendKey = function(ev, action, key) {
 	client.send(new Uint16Array([INPUT_KEY, action, key]));
-	ev.preventDefault();
+	if(ev){ev.preventDefault();}
 };
 
 // struct input_mouse_t { uint16 type, uint16 flags; float32 x; float32 y; int16 amount }
@@ -53,10 +52,16 @@ var mouseDataTypeFlags = new Uint16Array(mouseDataBuffer, 0);
 var mouseDataCoords = new Float32Array(mouseDataBuffer, 4);
 var mouseScrollAmount = new Int32Array(mouseDataBuffer, 12);
 
-var sendMouse = function(ev, action, xbutton) {
+//Mmouse defines if we're calling this from the mouse controller, mX and mY define how much movement has happened. 
+var sendMouse = function(ev, action, xbutton, mmouse, mX, mY) {
 	var type = 0;
 	var x, y;
 
+	if (mmouse) {
+	type |= INPUT_MOUSE_BUTTON;
+	x = mX;
+	y = mY;
+	}
 	if( action ) {
 		type |= INPUT_MOUSE_BUTTON;
 		
@@ -67,7 +72,7 @@ var sendMouse = function(ev, action, xbutton) {
 	}
 	
 	// Only make relative mouse movements if no button is pressed
-	if( !action && mouseLock ) {
+	if( !action && mouseLock && !mmouse) {
 		type |= INPUT_MOUSE_RELATIVE;
 		
 		var p = ev.changedTouches ? ev.changedTouches[0] : ev;
@@ -87,7 +92,7 @@ var sendMouse = function(ev, action, xbutton) {
 
 	// If we send absoulte mouse coords, we can always do so, even for
 	// button presses.
-	if( !mouseLock ) {
+	if( !mouseLock && !mmouse) {
 		type |= INPUT_MOUSE_ABSOLUTE;
 		
 		var rect = canvas.getBoundingClientRect();
@@ -104,10 +109,11 @@ var sendMouse = function(ev, action, xbutton) {
 	mouseDataCoords[0] = x;
 	mouseDataCoords[1] = y;
 	//Because the xbutton and scroll data go into the dwExtraInfo parameter we will just send the xbutton here.
-	mouseScrollAmount[0] = (xbutton || -ev.detail * 20 || ev.wheelDelta || 0);
+	if(ev){mouseScrollAmount[0] = (xbutton || -ev.detail * 20 || ev.wheelDelta || 0);}
 	 
 	client.send(mouseDataBuffer);
-	ev.preventDefault();
+	if(ev){ev.preventDefault();}
+	
 };
 
 

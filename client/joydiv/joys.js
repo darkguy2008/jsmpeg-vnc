@@ -45,3 +45,12 @@
 		break;
 	  }
     });
+
+    var element = document.getElementById('mouse');
+    var joydiv = new JoydivModule.Joydiv({'element':element});
+    element.addEventListener('joydiv-changed',function(e){
+		direction = joydiv.getOneOf8Directions();
+		var changeX=direction.offset.x * JoySensitivity;
+		var changeY=direction.offset.y * JoySensitivity;
+		sendMouse(null, null, null, true, changeX, changeY);
+    });
