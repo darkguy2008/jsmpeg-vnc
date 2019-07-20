@@ -165,7 +165,7 @@ void app_on_close(app_t *self, libwebsocket *socket) {
 	if ( connections <= 0 ) { 
 		printf("\nclient disconnected: %s\n", server_get_client_address(self->server, socket));
 		printf("No client connected, pausing encoder to save power\n"); 
-		connections = 0;
+		if ( connections != 0) {connections = 0;}
 	} else {
 		printf("\nclient disconnected: %s\n", server_get_client_address(self->server, socket));
 		printf("clients remaining: %i\n", connections);
