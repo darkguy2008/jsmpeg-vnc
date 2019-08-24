@@ -1,7 +1,3 @@
-// Set the body class to show/hide certain elements on mobile/desktop
-document.body.className = ('ontouchstart' in window) ? 'mobile' : 'desktop';
-
-
 // Setup the WebSocket connection and start the player
 var client = new WebSocket( 'ws://' + window.location.host + '/ws' );
 
@@ -203,13 +199,26 @@ canvas.addEventListener('touchstart', function(ev){
 canvas.addEventListener('touchend', function(ev){ sendMouse(ev, MOUSE_1_UP); }, false);
 canvas.addEventListener('touchmove', function(ev){ sendMouse(ev, null); }, false);
 
-// Touch buttons emulating keyboard keys
-var defineTouchButton = function( element, keyCode ) {
-	element.addEventListener('touchstart', function(ev){ sendKey(ev, KEY_DOWN, keyCode); }, false);
-	element.addEventListener('touchend', function(ev){ sendKey(ev, KEY_UP, keyCode); }, false);
-};
-
-var touchKeys = document.querySelectorAll('.key');
-for( var i = 0; i < touchKeys.length; i++ ) {
-	defineTouchButton(touchKeys[i], touchKeys[i].dataset.code);
+// Resize
+function resize() {
+	let w = canvas.getAttribute("width");
+	let h = canvas.getAttribute("height");
+	let css_w = window.innerWidth;
+	let css_h = h / w * css_w;
+	if (css_h > window.innerHeight) {
+		css_h = window.innerHeight;
+		css_w = w / h * css_h;
+	}
+	canvas.style.width = css_w + "px";
+	canvas.style.height = css_h + "px";
 }
+
+function isCanvasReady() {
+	if (canvas.getAttribute("width") != 0) {
+		resize();
+		window.onresize = resize;
+	} else {
+		setTimeout(isCanvasReady, 100);
+	}
+}
+isCanvasReady();
