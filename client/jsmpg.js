@@ -780,8 +780,7 @@ jsmpeg.prototype.initBuffers = function() {
 
 	if (this.gl) {
 		this.gl.useProgram(this.program);
-		var codedWidth = ((this.width + 15) >> 4) << 4;
-		this.gl.viewport(0, 0, codedWidth, this.height);
+		this.gl.viewport(0, 0, this.width, this.height);
 	}
 	else {
 		this.currentRGBA = this.canvasContext.getImageData(0, 0, this.width, this.height);
