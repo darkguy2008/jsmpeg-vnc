@@ -39,8 +39,7 @@ void exit_usage(char *self_name) {
 		"  -p port (default: 8080)\n"
 		"  -c crop area in the captured window as X,Y,W,H. E.g.: -c 200,300,640,480\n"
 		"  -i enable/disable remote input. E.g. -i 0 (default: 1)\n"
-		"  -g specify the grabber DLL name. E.g. -g grabber.dll\n"
-		"  -t number of encoding threads to use. E.g. -t 8 (default: 2)\n\n"
+		"  -g specify the grabber DLL name. E.g. -g grabber.dll\n\n"
 
 		"Use \"desktop\" as the window name to capture the whole Desktop. Use \"cursor\"\n"
 		"to capture the window at the current cursor position.\n\n"
@@ -64,8 +63,7 @@ int main(int argc, char* argv[]) {
 		port = 8080,
 		width = 0,
 		height = 0,
-		allow_input = 1,
-		encoding_threads = 2;
+		allow_input = 1;
 	
 	std::string grabber_dll = "";
 
@@ -85,7 +83,6 @@ int main(int argc, char* argv[]) {
 			case 'i': allow_input = atoi(argv[i+1]); break;
 			case 'c': sscanf(argv[i+1], "%d,%d,%d,%d", &crop.x, &crop.y, &crop.width, &crop.height); break;
 			case 'g': grabber_dll = argv[i+1]; break;
-			case 't': encoding_threads = atoi(argv[i+1]); break;
 			default: exit_usage(argv[0]);
 		}
 	}
@@ -111,7 +108,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	// Start the app
-	app_t *app = app_create(window, port, bit_rate, width, height, allow_input, crop, grabber_dll, encoding_threads);
+	app_t *app = app_create(window, port, bit_rate, width, height, allow_input, crop, grabber_dll);
 
 	if( !app ) {
 		return 1;

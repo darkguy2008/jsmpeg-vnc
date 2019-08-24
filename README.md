@@ -20,7 +20,6 @@ Options:
 	-c crop area in the captured window as X,Y,W,H. E.g.: -c 200,300,640,480
 	-i enable/disable remote input. E.g. -i 0 (default: 1)
 	-g specify the grabber DLL name. E.g. -g grabber.dll
-	-t number of encoding threads to use. E.g. -t 8 (default: 2)
 	
 Use "desktop" as the window name to capture the whole Desktop. Use "cursor"
 to capture the window at the current cursor position.

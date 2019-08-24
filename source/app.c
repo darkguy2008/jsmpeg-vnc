@@ -69,7 +69,7 @@ void on_close(server_t *server, libwebsocket *socket) { app_on_close((app_t *)se
 int connections = 0;
 
 
-app_t *app_create(HWND window, int port, int bit_rate, int out_width, int out_height, int allow_input, grabber_crop_area_t crop, std::string grabber_dll, int encoding_threads) {
+app_t *app_create(HWND window, int port, int bit_rate, int out_width, int out_height, int allow_input, grabber_crop_area_t crop, std::string grabber_dll) {
 	app_t *self = (app_t *)malloc(sizeof(app_t));
 	memset(self, 0, sizeof(app_t));
 
@@ -89,8 +89,7 @@ app_t *app_create(HWND window, int port, int bit_rate, int out_width, int out_he
 	self->encoder = encoder_create(
 		self->grabber->width, self->grabber->height, // in size
 		out_width, out_height, // out size
-		bit_rate, 
-		encoding_threads
+		bit_rate
 	);
 	
 	self->server = server_create(port, APP_FRAME_BUFFER_SIZE);
