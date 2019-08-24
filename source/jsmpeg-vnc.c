@@ -40,7 +40,7 @@ void exit_usage(char *self_name) {
 		"  -c crop area in the captured window as X,Y,W,H. E.g.: -c 200,300,640,480\n"
 		"  -i enable/disable remote input. E.g. -i 0 (default: 1)\n"
 		"  -g specify the grabber DLL name. E.g. -g grabber.dll\n"
-		"  -t number of encoding threads to use. E.g. -t 8 (default: 1, may result in stuttering.)\n\n"
+		"  -t number of encoding threads to use. E.g. -t 8 (default: 2)\n\n"
 
 		"Use \"desktop\" as the window name to capture the whole Desktop. Use \"cursor\"\n"
 		"to capture the window at the current cursor position.\n\n"
@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
 		width = 0,
 		height = 0,
 		allow_input = 1,
-		encoding_threads = 1;
+		encoding_threads = 2;
 	
 	std::string grabber_dll = "";
 
