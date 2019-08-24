@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string>
 
 #include "app.h"
 #include "timer.h"
@@ -66,20 +65,15 @@ int on_http_req(server_t *server, libwebsocket *socket, char *request) { return 
 void on_message(server_t *server, libwebsocket *socket, void *data, size_t len) { app_on_message((app_t *)server->user, socket, data, len); }
 void on_close(server_t *server, libwebsocket *socket) { app_on_close((app_t *)server->user, socket); }
 
-int connections = 0;
 
 
-app_t *app_create(HWND window, int port, int bit_rate, int out_width, int out_height, int allow_input, grabber_crop_area_t crop, std::string grabber_dll) {
+
+app_t *app_create(HWND window, int port, int bit_rate, int out_width, int out_height, int allow_input, grabber_crop_area_t crop) {
 	app_t *self = (app_t *)malloc(sizeof(app_t));
 	memset(self, 0, sizeof(app_t));
 
 	self->mouse_speed = APP_MOUSE_SPEED;
-	if (grabber_dll != "") {
-		self->grabber = grabber_create(window, grabber_dll);
-	} else {
-		self->grabber = grabber_create(window, crop);
-	}
-	
+	self->grabber = grabber_create(window, crop);
 	self->allow_input = allow_input;
 	
 	if( !out_width ) { out_width = self->grabber->width; }
@@ -136,8 +130,6 @@ int app_on_http_req(app_t *self, libwebsocket *socket, char *request) {
 void app_on_connect(app_t *self, libwebsocket *socket) {
 	printf("\nclient connected: %s\n", server_get_client_address(self->server, socket));
 
-	connections += 1;
-
 	jsmpeg_header_t header = {		
 		{'j','s','m','p'}, 
 		swap_int16(self->encoder->out_width), swap_int16(self->encoder->out_height)
@@ -147,15 +139,13 @@ void app_on_connect(app_t *self, libwebsocket *socket) {
 
 void app_on_close(app_t *self, libwebsocket *socket) {
 	printf("\nclient disconnected: %s\n", server_get_client_address(self->server, socket));
-	
-	connections -= 1;
-	
 	if ((GetKeyState(VK_CAPITAL) & 0x0001)!=0){
 		keybd_event(VK_CAPITAL,0x14,0,0);
 		keybd_event(VK_CAPITAL,0x14,KEYEVENTF_KEYUP,0);
 	}
 	keybd_event(VK_SHIFT,0x10,KEYEVENTF_KEYUP,0);
 	keybd_event(VK_CONTROL,0x11,KEYEVENTF_KEYUP,0);
+
 }
 
 void app_on_message(app_t *self, libwebsocket *socket, void *data, size_t len) {
@@ -229,29 +219,27 @@ void app_run(app_t *self, int target_fps) {
 	timer_t *frame_timer = timer_create();
 
 	while( true ) {
-		if ( connections > 0 ) {
-			double delta = timer_delta(frame_timer);
-			if( delta > wait_time ) {
-				fps = fps * 0.95f + 50.0f/delta;
-				timer_reset(frame_timer);
+		double delta = timer_delta(frame_timer);
+		if( delta > wait_time ) {
+			fps = fps * 0.95f + 50.0f/delta;
+			timer_reset(frame_timer);
 
-				void *pixels;
-				double grab_time = timer_measure(grab_time) {
-					pixels = grabber_grab(self->grabber);
-				}
-
-				double encode_time = timer_measure(encode_time) {
-					size_t encoded_size = APP_FRAME_BUFFER_SIZE - sizeof(jsmpeg_frame_t);
-					encoder_encode(self->encoder, pixels, frame->data, &encoded_size);
-				
-					if( encoded_size ) {
-						frame->size = swap_int32(sizeof(jsmpeg_frame_t) + encoded_size);
-						server_broadcast(self->server, frame, sizeof(jsmpeg_frame_t) + encoded_size, server_type_binary);
-					}
-				}
-			
-				printf("fps:%3d (grabbing:%6.2fms, scaling/encoding:%6.2fms)\r", (int)fps, grab_time, encode_time);
+			void *pixels;
+			double grab_time = timer_measure(grab_time) {
+				pixels = grabber_grab(self->grabber);
 			}
+
+			double encode_time = timer_measure(encode_time) {
+				size_t encoded_size = APP_FRAME_BUFFER_SIZE - sizeof(jsmpeg_frame_t);
+				encoder_encode(self->encoder, pixels, frame->data, &encoded_size);
+				
+				if( encoded_size ) {
+					frame->size = swap_int32(sizeof(jsmpeg_frame_t) + encoded_size);
+					server_broadcast(self->server, frame, sizeof(jsmpeg_frame_t) + encoded_size, server_type_binary);
+				}
+			}
+			
+			printf("fps:%3d (grabbing:%6.2fms, scaling/encoding:%6.2fms)\r", (int)fps, grab_time, encode_time);
 		}
 
 		server_update(self->server);
