@@ -24,7 +24,7 @@ var jsmpeg = window.jsmpeg = function(url, opts) {
 	this.zeroBlockData = new Int32Array(64);
 	this.fillArray(this.zeroBlockData, 0);
 	this.intraFrames = [];
-	
+
 	// Use WebGL for YCbCrToRGBA conversion if possible (much faster)
 	if (!opts.forceCanvas2D && this.initWebGL()) {
 		this.renderFrame = this.renderFrameGL;
@@ -1005,32 +1005,12 @@ jsmpeg.prototype.compileShader = function(type, source) {
 	return shader;
 };
 
-jsmpeg.prototype.allowsClampedTextureData = function() {
-	var gl = this.gl;
-	var texture = gl.createTexture();
-
-	gl.bindTexture(gl.TEXTURE_2D, texture);
-	gl.texImage2D(
-		gl.TEXTURE_2D, 0, gl.LUMINANCE, 1, 1, 0,
-		gl.LUMINANCE, gl.UNSIGNED_BYTE, new Uint8ClampedArray([0])
-	);
-	return (gl.getError() === 0);
-};
-
 jsmpeg.prototype.initWebGL = function() {
 	var gl;
 
 	// attempt to get a webgl context
 	try {
-		var options = { 
-		preserveDrawingBuffer: this.preserveDrawingBuffer, 
-		alpha: false,
-		depth: false,
-		stencil: false,
-		antialias: false,
-		premultipliedAlpha: false
-		};
-		
+		var options = { preserveDrawingBuffer: this.preserveDrawingBuffer };
 		gl = this.gl = this.canvas.getContext('webgl', options) || this.canvas.getContext('experimental-webgl', options);
 	} catch (e) {
 		return false;
@@ -1082,21 +1062,15 @@ jsmpeg.prototype.initWebGL = function() {
 	return true;
 };
 
-jsmpeg.prototype.renderFrameGL = function(isClampedArray) {
+jsmpeg.prototype.renderFrameGL = function() {
 	var gl = this.gl;
 
-	// In some browsers WebGL doesn't like Uint8ClampedArrays (this is a bug
-	// and should be fixed soon-ish), so we have to create a Uint8Array view 
-	// for each plane.
-	//this.shouldCreateUnclampedViews = !this.allowsClampedTextureData();
-	this.shouldCreateUnclampedViews = true;
-	
-	if (this.shouldCreateUnclampedViews) {
+	// WebGL doesn't like Uint8ClampedArrays, so we have to create a Uint8Array view for
+	// each plane
 	var uint8Y = new Uint8Array(this.currentY.buffer),
 		uint8Cr = new Uint8Array(this.currentCr.buffer),
 		uint8Cb = new Uint8Array(this.currentCb.buffer);
-	}
-	
+
 	gl.activeTexture(gl.TEXTURE0);
 	gl.bindTexture(gl.TEXTURE_2D, this.YTexture);
 
@@ -2556,27 +2530,25 @@ var
 	START_USER_DATA = 0xB2,
 
 	// Shaders for accelerated WebGL YCbCrToRGBA conversion
-		SHADER_FRAGMENT_YCBCRTORGBA= [
+	SHADER_FRAGMENT_YCBCRTORGBA = [
 		'precision mediump float;',
 		'uniform sampler2D YTexture;',
 		'uniform sampler2D CBTexture;',
 		'uniform sampler2D CRTexture;',
 		'varying vec2 texCoord;',
 
-		'mat4 rec601 = mat4(',
-			'1.16438,  0.00000,  1.59603, -0.87079,',
-			'1.16438, -0.39176, -0.81297,  0.52959,',
-			'1.16438,  2.01723,  0.00000, -1.08139,',
-			'0, 0, 0, 1',
-		');',
-
 		'void main() {',
 			'float y = texture2D(YTexture, texCoord).r;',
-			'float cb = texture2D(CBTexture, texCoord).r;',
-			'float cr = texture2D(CRTexture, texCoord).r;',
+			'float cr = texture2D(CBTexture, texCoord).r - 0.5;',
+			'float cb = texture2D(CRTexture, texCoord).r - 0.5;',
 
-			'gl_FragColor = vec4(y, cr, cb, 1.0) * rec601;',
-			'}',
+			'gl_FragColor = vec4(',
+				'y + 1.4 * cr,',
+				'y + -0.343 * cb - 0.711 * cr,',
+				'y + 1.765 * cb,',
+				'1.0',
+			');',
+		'}'
 	].join('\n'),
 
 	SHADER_FRAGMENT_LOADING = [
