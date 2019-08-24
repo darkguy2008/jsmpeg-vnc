@@ -47,7 +47,6 @@ void exit_usage(char *self_name) {
 		"i.e: http://<server-ip>:8080/?mouselock\n\n",		
 		self_name
 	);
-	system("pause");
 	exit(0);
 }
 
