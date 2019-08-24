@@ -33,7 +33,7 @@ mouse movements, not absolute ones), append "?mouselock" at the target URL
 i.e: http://<server-ip>:8080/?mouselock
 ```	
 
-For sharing the whole Desktop, Windows' Aero theme should be disabled as it slows down screen capture significantly. When serving a single window (e.g. games), Aero only has a marginal performance impact and can be left enabled. (Note: for Windows 8.1+ see [this](https://github.com/Integrated-Media/jsmpeg-vnc/blob/master/README.md#windows-81--up))
+For sharing the whole Desktop, Windows' Aero theme should be disabled as it slows down screen capture significantly. When serving a single window (e.g. games), Aero only has a marginal performance impact and can be left enabled. (Note: for Windows 8.1+ see [this](https://github.com/Integrated-Media/jsmpeg-vnc#Windows-8.1--up))
 
 
 Capturing and encoding 1920x1080 video narrowly amounts to 60fps on my system and occupies a whole CPU core. Capturing smaller windows significantly speeds up the process. Depending on your Wifi network quality you may also want to dial down the bitrate for large video sizes.
