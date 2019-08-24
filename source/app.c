@@ -84,7 +84,7 @@ app_t *app_create(HWND window, int port, int bit_rate, int out_width, int out_he
 	
 	if( !out_width ) { out_width = self->grabber->width; }
 	if( !out_height ) { out_height = self->grabber->height; }
-	if( !bit_rate ) { bit_rate = out_width * 1650; } // estimate bit rate based on output size
+	if( !bit_rate ) { bit_rate = out_width * 1500; } // estimate bit rate based on output size
 
 	self->encoder = encoder_create(
 		self->grabber->width, self->grabber->height, // in size
@@ -146,18 +146,10 @@ void app_on_connect(app_t *self, libwebsocket *socket) {
 }
 
 void app_on_close(app_t *self, libwebsocket *socket) {
-	
+	printf("\nclient disconnected: %s\n", server_get_client_address(self->server, socket));
 	
 	connections -= 1;
-	if ( connections <= 0 ) { 
-		printf("\nclient disconnected: %s\n", server_get_client_address(self->server, socket));
-		printf("No client connected, pausing encoder to save power\n"); 
-		connections = 0;
-	} else {
-		printf("\nclient disconnected: %s\n", server_get_client_address(self->server, socket));
-		printf("clients remaining: %i\n", connections);
-	}
-
+	
 	if ((GetKeyState(VK_CAPITAL) & 0x0001)!=0){
 		keybd_event(VK_CAPITAL,0x14,0,0);
 		keybd_event(VK_CAPITAL,0x14,KEYEVENTF_KEYUP,0);
@@ -265,6 +257,7 @@ void app_run(app_t *self, int target_fps) {
 		server_update(self->server);
 		Sleep(1);
 	}
+
 	timer_destroy(frame_timer);
 	free(frame);
 }

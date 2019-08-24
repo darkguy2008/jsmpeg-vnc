@@ -38,8 +38,7 @@ void exit_usage(char *self_name) {
 		"  -f target framerate (default: 60)\n"
 		"  -p port (default: 8080)\n"
 		"  -c crop area in the captured window as X,Y,W,H. E.g.: -c 200,300,640,480\n"
-		"  -i enable/disable remote input. E.g. -i 0 (default: 1)\n"
-		"  -g specify the grabber DLL name. E.g. -g grabber.dll\n\n"
+		"  -i enable/disable remote input. E.g. -i 0 (default: 1)\n\n"
 
 		"Use \"desktop\" as the window name to capture the whole Desktop. Use \"cursor\"\n"
 		"to capture the window at the current cursor position.\n\n"
