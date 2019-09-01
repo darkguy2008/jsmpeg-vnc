@@ -19,7 +19,9 @@ Options:
 	-p port (default: 8080)
 	-c crop area in the captured window as X,Y,W,H. E.g.: -c 200,300,640,480
 	-i enable/disable remote input. E.g. -i 0 (default: 1)
-
+	-g specify the grabber DLL name. E.g. -g grabber.dll
+	-t number of encoding threads to use. E.g. -t 8 (default: 1, may result in stuttering.)
+	
 Use "desktop" as the window name to capture the whole Desktop. Use "cursor"
 to capture the window at the current cursor position.
 
@@ -31,9 +33,14 @@ mouse movements, not absolute ones), append "?mouselock" at the target URL
 i.e: http://<server-ip>:8080/?mouselock
 ```	
 
-For sharing the whole Desktop, Windows' Aero theme should be disabled as it slows down screen capture significantly. When serving a single window (e.g. games), Aero only has a marginal performance impact and can be left enabled.
+For sharing the whole Desktop, Windows' Aero theme should be disabled as it slows down screen capture significantly. When serving a single window (e.g. games), Aero only has a marginal performance impact and can be left enabled. (Note: for Windows 8.1+ see [this](https://github.com/Integrated-Media/jsmpeg-vnc/blob/master/README.md#windows-81--up))
+
 
 Capturing and encoding 1920x1080 video narrowly amounts to 60fps on my system and occupies a whole CPU core. Capturing smaller windows significantly speeds up the process. Depending on your Wifi network quality you may also want to dial down the bitrate for large video sizes.
+
+## Windows 8.1 & Up
+
+Download the [grabber plugin](https://github.com/ollydev/jsmpeg-vnc-desktop-duplication/releases) and append the -g option. E.g. -g grabber.dll, this will be much faster and provide a higher framerate and lower latency. [See a desktop capture performance comparison here](https://imgur.com/a/hieMLNP).
 
 If Windows complains about a missing MSVCR100.dll, install the [Microsoft Visual C++ 2010 Redistributable Package](https://www.microsoft.com/en-us/download/details.aspx?id=5555).
 

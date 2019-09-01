@@ -558,7 +558,8 @@ jsmpeg.prototype.initBuffers = function() {
 	
 	if( this.gl ) {
 		this.gl.useProgram(this.program);
-		this.gl.viewport(0, 0, this.width, this.height);
+		var codedWidth = ((this.width + 15) >> 4) << 4;
+		this.gl.viewport(0, 0, codedWidth, this.height);
 	}
 	else {
 		this.currentRGBA = this.canvasContext.getImageData(0, 0, this.width, this.height);
@@ -2304,25 +2305,27 @@ var
 	START_PACKET_AUDIO = 0xFB,
 
 	// Shaders for accelerated WebGL YCbCrToRGBA conversion
-	SHADER_FRAGMENT_YCBCRTORGBA = [
+	SHADER_FRAGMENT_YCBCRTORGBA= [
 		'precision mediump float;',
 		'uniform sampler2D YTexture;',
 		'uniform sampler2D CBTexture;',
 		'uniform sampler2D CRTexture;',
 		'varying vec2 texCoord;',
-	
+
+		'mat4 rec601 = mat4(',
+			'1.16438,  0.00000,  1.59603, -0.87079,',
+			'1.16438, -0.39176, -0.81297,  0.52959,',
+			'1.16438,  2.01723,  0.00000, -1.08139,',
+			'0, 0, 0, 1',
+		');',
+
 		'void main() {',
 			'float y = texture2D(YTexture, texCoord).r;',
-			'float cr = texture2D(CBTexture, texCoord).r - 0.5;',
-			'float cb = texture2D(CRTexture, texCoord).r - 0.5;',
-			
-			'gl_FragColor = vec4(',
-				'y + 1.4 * cr,',
-				'y + -0.343 * cb - 0.711 * cr,',
-				'y + 1.765 * cb,',
-				'1.0',
-			');',
-		'}'
+			'float cb = texture2D(CBTexture, texCoord).r;',
+			'float cr = texture2D(CRTexture, texCoord).r;',
+
+			'gl_FragColor = vec4(y, cr, cb, 1.0) * rec601;',
+			'}',
 	].join('\n'),
 
 	SHADER_FRAGMENT_LOADING = [

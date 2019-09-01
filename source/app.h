@@ -13,22 +13,22 @@
 #define APP_FRAME_BUFFER_SIZE (1024*1024)
 
 typedef struct {
-	encoder_t *encoder;
-	grabber_t *grabber;
-	server_t *server;
+	encoder_t* encoder;
+	grabber_t* grabber;
+	server_t* server;
 	int allow_input;
 
 	float mouse_speed;
 } app_t;
 
 
-app_t *app_create(HWND window, int port, int bit_rate, int out_width, int out_height, int allow_input, grabber_crop_area_t crop);
-void app_destroy(app_t *self);
-void app_run(app_t *self, int targt_fps);
+app_t* app_create(HWND window, int port, int bit_rate, int out_width, int out_height, int allow_input, grabber_crop_area_t crop, std::string grabber_dll, int encoding_threads);
+void app_destroy(app_t* self);
+void app_run(app_t* self, int targt_fps);
 
-int app_on_http_req(app_t *self, libwebsocket *socket, char *request);
-void app_on_connect(app_t *self, libwebsocket *socket);
-void app_on_close(app_t *self, libwebsocket *socket);
-void app_on_message(app_t *self, libwebsocket *socket, void *data, size_t len);
+int app_on_http_req(app_t* self, libwebsocket* socket, char* request);
+void app_on_connect(app_t* self, libwebsocket* socket);
+void app_on_close(app_t* self, libwebsocket* socket);
+void app_on_message(app_t* self, libwebsocket* socket, void* data, size_t len);
 
 #endif

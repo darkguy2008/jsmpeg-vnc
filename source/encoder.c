@@ -7,7 +7,7 @@
 #pragma comment(lib, "avutil.lib")
 #pragma comment(lib, "swscale.lib")
 
-encoder_t *encoder_create(int in_width, int in_height, int out_width, int out_height, int bitrate) {
+encoder_t *encoder_create(int in_width, int in_height, int out_width, int out_height, int bitrate, int encoding_threads) {
 	encoder_t *self = (encoder_t *)malloc(sizeof(encoder_t));
 	memset(self, 0, sizeof(encoder_t));
 
@@ -28,6 +28,7 @@ encoder_t *encoder_create(int in_width, int in_height, int out_width, int out_he
 	self->context->time_base.den = 30;
 	self->context->gop_size = 30;
 	self->context->max_b_frames = 0;
+	self->context->thread_count = encoding_threads;
 	self->context->pix_fmt = PIX_FMT_YUV420P;
 	
 	avcodec_open2(self->context, self->codec, NULL);

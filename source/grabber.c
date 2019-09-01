@@ -13,6 +13,7 @@ grabber_t *grabber_create(HWND window, grabber_crop_area_t crop) {
 	RECT rect;
 	GetClientRect(window, &rect);
 	
+	self->dll = 0;
 	self->window = window;
 	
 	self->width = rect.right-rect.left;
@@ -44,22 +45,48 @@ grabber_t *grabber_create(HWND window, grabber_crop_area_t crop) {
 	return self;
 }
 
+grabber_t *grabber_create(HWND window, std::string grabber_dll) {
+	grabber_t *self = (grabber_t *)malloc(sizeof(grabber_t));
+	memset(self, 0, sizeof(grabber_t));
+	
+	self->window = window;
+	self->dll = LoadLibraryA(grabber_dll.c_str());
+	self->dll_grab = (dll_grabber_grab)GetProcAddress(self->dll, "grabber_grab");
+	self->dll_create = (dll_grabber_create)GetProcAddress(self->dll, "grabber_create");
+	self->dll_destroy = (dll_grabber_destroy)GetProcAddress(self->dll, "grabber_destroy");
+	self->dll_create(self->window, self->width, self->height);
+	self->pixels = malloc(self->width * self->height * 4);
+
+	return self;
+}
+
 void grabber_destroy(grabber_t *self) {
 	if( self == NULL ) { return; }
-
-	ReleaseDC(self->window, self->windowDC);
-    DeleteDC(self->memoryDC);
-    DeleteObject(self->bitmap);
+	
+	if( self->dll > 0) {
+		self->dll_destroy();
+		FreeLibrary(self->dll);
+	} else {
+		ReleaseDC(self->window, self->windowDC);
+		DeleteDC(self->memoryDC);
+		DeleteObject(self->bitmap);
+	}
 	
 	free(self->pixels);
 	free(self);
 }
 
 void *grabber_grab(grabber_t *self) {
-	SelectObject(self->memoryDC, self->bitmap);
-	BitBlt(self->memoryDC, 0, 0, self->width, self->height, self->windowDC, self->crop.x, self->crop.y, SRCCOPY);
-	GetDIBits(self->memoryDC, self->bitmap, 0, self->height, self->pixels, (BITMAPINFO*)&(self->bitmapInfo), DIB_RGB_COLORS);
-	
+	if( self->dll > 0 ) {
+		if( self->dll_grab(self->window, self->pixels, self->width, self->height) == 0) {
+			return NULL;
+		}
+	} else {
+		SelectObject(self->memoryDC, self->bitmap);
+		BitBlt(self->memoryDC, 0, 0, self->width, self->height, self->windowDC, self->crop.x, self->crop.y, SRCCOPY);
+		GetDIBits(self->memoryDC, self->bitmap, 0, self->height, self->pixels, (BITMAPINFO*)&(self->bitmapInfo), DIB_RGB_COLORS);
+	}
+
 	return self->pixels;
 }
 
