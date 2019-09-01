@@ -1,5 +1,6 @@
-﻿#ifndef TIMER_H
+#ifndef TIMER_H
 #define TIMER_H
+#include <cstddef>
 
 typedef struct timer_t {
 	__int64 base_time;

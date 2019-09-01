@@ -3,6 +3,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <cstddef>
 
 #include "encoder.h"
 #include "grabber.h"

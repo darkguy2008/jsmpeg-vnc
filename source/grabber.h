@@ -1,8 +1,8 @@
 #ifndef GRABBER_H
 #define GRABBER_H
-
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <cstddef>
 
 typedef struct {
 	int x, y, width, height;

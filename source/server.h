@@ -1,5 +1,6 @@
-﻿#ifndef SERVER_H
+#ifndef SERVER_H
 #define SERVER_H
+#include <cstddef>
 
 #include "libwebsocket/libwebsockets.h"
 

@@ -3,7 +3,8 @@
 
 #include "app.h"
 #include "timer.h"
-
+#pragma comment(lib, "legacy_stdio_definitions.lib")
+extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; }
 
 typedef enum {
 	jsmpeg_frame_type_video = 0xFA010000,

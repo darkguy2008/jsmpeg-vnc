@@ -6,6 +6,7 @@ extern "C" {
 	#include "ffmpeg/include/libavcodec/avcodec.h"
 	#include "ffmpeg/include/libswscale/swscale.h"	
 }
+#include <cstddef>
 
 typedef struct {
 	AVCodec *codec;
